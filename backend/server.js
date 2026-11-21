@@ -21,7 +21,8 @@ connectDB();
 
 //api end points
 app.use("/api/food",foodRouter)
-app.use("/images",express.static('uploads'))
+const uploadDir = process.env.VERCEL ? "/tmp" : "uploads";
+app.use("/images",express.static(uploadDir))
 app.use("/api/user",userRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/order",orderRouter)
@@ -31,6 +32,11 @@ app.get('/',(req,res)=>{
     res.send("API Working")
 })
 
-app.listen(port,()=>{
-    console.log(`Server started on http://localhost:${port}`)
-})
+if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
+    app.listen(port,()=>{
+        console.log(`Server started on http://localhost:${port}`)
+    })
+}
+
+export default app;
+

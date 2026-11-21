@@ -42,7 +42,8 @@ try {
 const removefood = async (req,res) =>{
 try {
     const food = await foodModel.findById(req.body.id);
-    fs.unlink(`uploads/${food.image}`,()=>{
+    const uploadDir = process.env.VERCEL ? "/tmp" : "uploads";
+    fs.unlink(`${uploadDir}/${food.image}`,()=>{
 
     })
     await foodModel.findByIdAndDelete(req.body.id)
@@ -52,6 +53,7 @@ try {
     res.json({success:false,message:'Error'})
 }
 }
+
 
 
 export {addFood,listfood,removefood}
