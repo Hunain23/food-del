@@ -32,6 +32,7 @@ const setStaticHeaders = (req, res, next) => {
     next()
 }
 
+app.use("/images", setStaticHeaders, express.static(path.join(__dirname, 'public', 'images')))
 app.use("/images", setStaticHeaders, express.static(path.join(__dirname, 'uploads')))
 if (process.env.VERCEL) {
     app.use("/images", setStaticHeaders, express.static('/tmp'))
