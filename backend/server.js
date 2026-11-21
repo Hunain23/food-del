@@ -2,6 +2,7 @@ import "dotenv/config"
 import express from "express"
 import cors from "cors"
 import path from "path"
+import fs from "fs"
 import { fileURLToPath } from "url"
 import { connectDB } from "./config/db.js"
 import foodRouter from "./routes/foodRoute.js"
@@ -26,17 +27,30 @@ connectDB();
 //api end points
 app.use("/api/food",foodRouter)
 
-const setStaticHeaders = (req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*")
-    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin")
-    next()
-}
+// Serve images with explicit fallback paths & cross-origin headers
+app.get("/images/:filename", (req, res) => {
+    const filename = req.params.filename;
+    const candidates = [
+        path.join(__dirname, "public", "images", filename),
+        path.join(__dirname, "uploads", filename),
+        path.join(process.cwd(), "public", "images", filename),
+        path.join(process.cwd(), "uploads", filename),
+        path.join(process.cwd(), "backend", "uploads", filename),
+        path.join("/tmp", filename)
+    ];
 
-app.use("/images", setStaticHeaders, express.static(path.join(__dirname, 'public', 'images')))
-app.use("/images", setStaticHeaders, express.static(path.join(__dirname, 'uploads')))
-if (process.env.VERCEL) {
-    app.use("/images", setStaticHeaders, express.static('/tmp'))
-}
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+
+    for (const filePath of candidates) {
+        if (fs.existsSync(filePath)) {
+            return res.sendFile(filePath);
+        }
+    }
+
+    return res.status(404).json({ success: false, message: "Image not found" });
+});
 
 app.use("/api/user",userRouter)
 app.use("/api/cart",cartRouter)
@@ -54,5 +68,6 @@ if (process.env.NODE_ENV !== "production" || !process.env.VERCEL) {
 }
 
 export default app;
+
 
 

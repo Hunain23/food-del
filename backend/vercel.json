@@ -1,19 +1,18 @@
 {
   "version": 2,
-  "headers": [
+  "builds": [
     {
-      "source": "/images/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, HEAD, OPTIONS" },
-        { "key": "Cross-Origin-Resource-Policy", "value": "cross-origin" }
-      ]
+      "src": "server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["uploads/**", "public/**"]
+      }
     }
   ],
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/server.js"
+      "src": "/(.*)",
+      "dest": "server.js"
     }
   ]
 }
