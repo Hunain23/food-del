@@ -21,8 +21,16 @@ const port = process.env.PORT || 4000
 app.use(express.json())
 app.use(cors())
 
-// db connection
-connectDB();
+// db connection middleware: ensures DB is connected before handling any route
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Database connection failed" });
+    }
+});
+
 
 //api end points
 app.use("/api/food",foodRouter)
