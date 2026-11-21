@@ -21,8 +21,10 @@ connectDB();
 
 //api end points
 app.use("/api/food",foodRouter)
-const uploadDir = process.env.VERCEL ? "/tmp" : "uploads";
-app.use("/images",express.static(uploadDir))
+app.use("/images",express.static('uploads'))
+if (process.env.VERCEL) {
+    app.use("/images",express.static('/tmp'))
+}
 app.use("/api/user",userRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/order",orderRouter)

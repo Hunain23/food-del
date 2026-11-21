@@ -15,9 +15,10 @@ dist-ssr/
 build/
 *.local
 
-# Backend Uploads (keep folder structure with .gitkeep)
+# Backend Uploads (track demo food images, keep folder with .gitkeep)
 backend/uploads/*
 !backend/uploads/.gitkeep
+!backend/uploads/*.png
 
 # Logs
 logs/
